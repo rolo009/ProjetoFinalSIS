@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\models\Contactos;
 use yii\rest\ActiveController;
 
 /**
@@ -61,5 +62,18 @@ class ContactosController extends Activecontroller
             ->all();
 
         return $mensagens;
+    }
+
+    public function actionRegisto()
+    {
+        $contactos = new Contactos();
+
+        $contactos->nome = \Yii::$app->request->post('nome');
+        $contactos->email = \Yii::$app->request->post('email');
+        $contactos->assunto = \Yii::$app->request->post('assunto');
+        $contactos->mensagem = \Yii::$app->request->post('mensagem');
+        $contactos->status = 0;
+
+        $contactos->save(false);
     }
 }

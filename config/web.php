@@ -54,18 +54,19 @@ $config = [
                     'controller' => 'pontosturisticos',
                     'pluralize' => false,
                     'extraPatterns' => [
+                        'GET search/{pesquisa}' => 'search',
                         'GET tipomonumento/{tipo}' => 'tipomonumento',
-                        'GET estiloconstrucao/{estilo}' => 'estiloconstrucao',
                         'GET estatisticas/{id}' => 'estatisticas',
                         'GET localidade/{local}' => 'localidade', //não reconhece
-                        'GET pontoturisticodetails/{id}' => 'pontoturistico', //não reconhece
+                        'GET info' => 'info', //não reconhece
                     ],
                     'tokens' => [
-                            '{id}' => '<id:\d+>',
-                            '{local}' => '<local:.*?>',
-                            '{estilo}' => '<estilo:.*?>',
-                            '{tipo}' => '<tipo:.*?>',
-],
+                        '{id}' => '<id:\d+>',
+                        '{local}' => '<local:.*?>',
+                        '{estilo}' => '<estilo:.*?>',
+                        '{tipo}' => '<tipo:.*?>',
+                        '{pesquisa}' => '<pesquisa:.*?>',
+                    ],
                 ],
 
                 ['class' => 'yii\rest\UrlRule',
@@ -73,23 +74,35 @@ $config = [
                     'pluralize' => false,
                     'except' => ['delete', 'create'],
                     'extraPatterns' => [
-                        'GET favoritos/{id}' => 'favoritos',
+                        'GET favoritos/{token}' => 'favoritos',
                         'GET info/{id}' => 'info', //recolhe info da tabela user e userprofile
-                        'PUT baniruser/{id}' => 'baniruser',
+                        'PATCH apagaruser/{token}' => 'apagaruser',
+                        'POST registo' => 'registo',
+                        'GET username/{user}' => 'username',
+                        'PUT editar/{token}' => 'editar',
+                        'POST login' => 'login',
+                        'POST addfavoritos' => 'addfavoritos',
+                        'DELETE removerfavoritos/{id}/{token}' => 'removerfavoritos',
+                    ],
+                    'tokens' => [
+                        '{id}' => '<id:\d+>',
+                        '{user}' => '<user:.*?>',
+                        '{token}' => '<token:.*?>',
                     ],
                 ],
 
                 ['class' => 'yii\rest\UrlRule',
                     'controller' => 'contactos',
                     'pluralize' => false,
-                    'except' => ['delete', 'create'],
+                    'except' => ['delete','update'],
                     'extraPatterns' => [
                         'GET mensagem/{id}' => 'mensagem',
                         'GET naolidas' => 'naolidas',
-                        'GET lidas' => 'lidas'
+                        'GET lidas' => 'lidas',
+                        'POST registo' => 'registo'
                     ],
-                ]
-            ],
+                ],
+            ]
 
         ],
     ],
