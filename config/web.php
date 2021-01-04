@@ -63,7 +63,6 @@ $config = [
                     'tokens' => [
                         '{id}' => '<id:\d+>',
                         '{local}' => '<local:.*?>',
-                        '{estilo}' => '<estilo:.*?>',
                         '{tipo}' => '<tipo:.*?>',
                         '{pesquisa}' => '<pesquisa:.*?>',
                     ],
@@ -74,15 +73,12 @@ $config = [
                     'pluralize' => false,
                     'except' => ['delete', 'create'],
                     'extraPatterns' => [
-                        'GET favoritos/{token}' => 'favoritos',
-                        'GET info/{id}' => 'info', //recolhe info da tabela user e userprofile
+                        'GET info/{id}' => 'info',
                         'PATCH apagaruser/{token}' => 'apagaruser',
                         'POST registo' => 'registo',
                         'GET username/{user}' => 'username',
                         'PUT editar/{token}' => 'editar',
                         'POST login' => 'login',
-                        'POST addfavoritos' => 'addfavoritos',
-                        'DELETE removerfavoritos/{id}/{token}' => 'removerfavoritos',
                     ],
                     'tokens' => [
                         '{id}' => '<id:\d+>',
@@ -100,6 +96,20 @@ $config = [
                         'GET naolidas' => 'naolidas',
                         'GET lidas' => 'lidas',
                         'POST registo' => 'registo'
+                    ],
+                ],
+                ['class' => 'yii\rest\UrlRule',
+                    'controller' => 'favoritos',
+                    'pluralize' => false,
+                    'except' => ['update'],
+                    'extraPatterns' => [
+                        'GET info/{token}' => 'info',
+                        'POST add' => 'add',
+                        'DELETE remover/{id}/{token}' => 'remover',
+                    ],
+                    'tokens' => [
+                        '{token}' => '<token:.*?>',
+                        '{id}' => '<id:\d+>',
                     ],
                 ],
             ]

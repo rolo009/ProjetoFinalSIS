@@ -33,7 +33,7 @@ class UserprofileController extends Activecontroller
         if ($user != null) {
             $user->status = $statusBan;
             $user->save(false);
-        }else{
+        } else {
             throw new \yii\web\NotFoundHttpException("Utilizador não encontrado");
         }
     }
@@ -44,16 +44,10 @@ class UserprofileController extends Activecontroller
 
         $model->email = \Yii::$app->request->post('email');
         $model->password = \Yii::$app->request->post('password');
-        $modelUser = User::findOne(['email' => $model->email]);
+        $modelUser = User::find()->where(['email' => $model->email])->one();
 
-        if ($modelUser->status == 1) {
-            throw new \yii\web\NotFoundHttpException("Esta conta foi apagada! Para mais informação contacte o suporte.");
-
-        } else if ($modelUser->status == 0) {
-            throw new \yii\web\NotFoundHttpException("Esta conta foi banida!");
-
-        } else if ($modelUser->status == 9) {
-            throw new \yii\web\NotFoundHttpException("Esta conta está inativa!");
+        if ($modelUser->status != 10) {
+             throw new \yii\web\NotFoundHttpException("Esta conta não possui os requisitos para que possa ser acedida!");
 
         } else {
             if ($model->login()) {
@@ -64,41 +58,10 @@ class UserprofileController extends Activecontroller
         }
     }
 
-    public function actionFavoritos($token)
-    {
-        $user = User::find()->where(['verification_token' => $token])->one();
-        $favoritos = Favoritos::find()->where(['user_idUtilizador' => $user->id])->all();
-        if ($favoritos == null) {
-            return null;
-        } else {
-            foreach ($favoritos as $favorito) {
-                $pontosTuristicosFavoritos[] = Pontosturisticos::find()->where(['id_pontoTuristico' => $favorito->pt_idPontoTuristico])->one();
-            }
-            foreach ($pontosTuristicosFavoritos as $pontoTuristicoFavorito){
-                if ($pontoTuristicoFavorito->tm_idTipoMonumento != null) {
-                    $pontoTuristicoFavorito->tm_idTipoMonumento = Tipomonumento::find()->where(['idTipoMonumento' => $pontoTuristicoFavorito->tm_idTipoMonumento])->one()->descricao;
-                }
-                if ($pontoTuristicoFavorito->ec_idEstiloConstrucao != null) {
-                    $pontoTuristicoFavorito->ec_idEstiloConstrucao = Estiloconstrucao::find()->where(['idEstiloConstrucao' => $pontoTuristicoFavorito->ec_idEstiloConstrucao])->one()->descricao;
-                }
-                if ($pontoTuristicoFavorito->localidade_idLocalidade != null) {
-                    $pontoTuristicoFavorito->localidade_idLocalidade = Localidade::find()->where(['id_localidade' => $pontoTuristicoFavorito->localidade_idLocalidade])->one()->nomeLocalidade;
-                }
-            }
-            if($pontosTuristicosFavoritos!=null){
-                return $pontosTuristicosFavoritos;
-
-            }else{
-                return null;
-            }
-        }
-
-    }
-
     public function actionInfo($id)
     {
         $user = User::findOne(['id' => $id]);
-        $userProfile = Userprofile::findOne(['id_userProfile' => $id]);
+        $userProfile = Userprofile::find()->where(['id_userProfile' => $id])->one();
 
         if ($user != null && $userProfile != null) {
 
@@ -112,9 +75,8 @@ class UserprofileController extends Activecontroller
                 'Localidade' => $userProfile->localidade,
                 'Sexo' => $userProfile->sexo,
             ]];
-
         } else {
-            throw new \yii\web\NotFoundHttpException("Utilizador não encontrado");
+            return "Utilizador não encontrado";
 
         }
     }
@@ -139,34 +101,42 @@ class UserprofileController extends Activecontroller
         $user->save(false);
         $userProfile->id_user_rbac = $user->getId();
 
-
         $userProfile->save(false);
-        /*
-                $auth = \Yii::$app->authManager;
-                $authorRole = $auth->getRole('user');
-                $auth->assign($authorRole, $user->getId());
-        */
+
+        if ($user->save() == true && $userProfile->save() == true) {
+            return true;
+        } else {
+            return false;
+        }
+
 
     }
 
     public function actionEditar($token)
     {
         $user = User::find()->where(['verification_token' => $token])->one();
-        $userProfile = Userprofile::find()->where(['id_user_rbac' => $user->id])->one();
+        if ($user != null) {
+            $userProfile = Userprofile::find()->where(['id_user_rbac' => $user->id])->one();
 
-        $user->username = \Yii::$app->request->post('username');
-        $user->email = \Yii::$app->request->post('email');
-        $user->setPassword(\Yii::$app->request->post('password'));
-        $userProfile->primeiroNome = \Yii::$app->request->post('primeiroNome');
-        $userProfile->ultimoNome = \Yii::$app->request->post('ultimoNome');
-        $userProfile->dtaNascimento = \Yii::$app->request->post('dtaNascimento');
-        $userProfile->morada = \Yii::$app->request->post('morada');
-        $userProfile->localidade = \Yii::$app->request->post('localidade');
-        $userProfile->distrito = \Yii::$app->request->post('distrito');
-        $userProfile->sexo = \Yii::$app->request->post('sexo');
-        $user->save(false);
-        $userProfile->id_user_rbac = $user->getId();
-        $userProfile->save(false);
+            $user->username = \Yii::$app->request->post('username');
+            $user->email = \Yii::$app->request->post('email');
+            $user->setPassword(\Yii::$app->request->post('password'));
+            $userProfile->primeiroNome = \Yii::$app->request->post('primeiroNome');
+            $userProfile->ultimoNome = \Yii::$app->request->post('ultimoNome');
+            $userProfile->dtaNascimento = \Yii::$app->request->post('dtaNascimento');
+            $userProfile->morada = \Yii::$app->request->post('morada');
+            $userProfile->localidade = \Yii::$app->request->post('localidade');
+            $userProfile->distrito = \Yii::$app->request->post('distrito');
+            $userProfile->sexo = \Yii::$app->request->post('sexo');
+            $user->save(false);
+            $userProfile->id_user_rbac = $user->getId();
+            $userProfile->save(false);
+
+            if ($user->save() == true && $userProfile->save() == true) {
+                return true;
+            }
+        }
+        return "Utilizador não encontrado/atualizado";
     }
 
     public function actionUsername($user)
@@ -178,35 +148,8 @@ class UserprofileController extends Activecontroller
             return $user;
 
         } else {
-            throw new \yii\web\NotFoundHttpException("Utilizador não encontrado");
+            return "Utilizador não encontrado";
 
         }
-    }
-
-    public function actionAddfavoritos()
-    {
-        $token = \Yii::$app->request->post('token');
-
-        $user = User::find()->where(['verification_token' => $token])->one();
-
-        $favorito = new Favoritos();
-
-        $favorito->pt_idPontoTuristico = \Yii::$app->request->post('id_pontoTuristico');
-        $favorito->user_idUtilizador = $user->id;
-
-        $favorito->save(false);
-
-    }
-
-    public function actionRemoverfavoritos($id, $token)
-    {
-
-        $user = User::find()->where(['verification_token' => $token])->one();
-
-        $favorito = Favoritos::find()->where(['pt_idPontoTuristico' => $id])
-            ->andWhere(['user_idUtilizador' => $user->id])->one();
-
-        $favorito->delete();
-
     }
 }
