@@ -45,7 +45,7 @@ class FavoritosController extends Activecontroller
 
     }
 
-    public function actionAddfavoritos()
+    public function actionAdd()
     {
         $token = \Yii::$app->request->post('token');
 
@@ -57,22 +57,33 @@ class FavoritosController extends Activecontroller
             $favorito->user_idUtilizador = $user->id;
 
             $favorito->save(false);
-        }
-        
 
+            if($favorito->save() == true){
+                return true;
+            }else{
+                return null;
+            }
+        }else{
+            return "Utilizador não encontrado";
+        }
 
     }
 
-    public function actionRemoverfavoritos($id, $token)
+    public function actionRemover($id, $token)
     {
-
         $user = User::find()->where(['verification_token' => $token])->one();
+        if ($user != null) {
+            $favorito = Favoritos::find()->where(['pt_idPontoTuristico' => $id])
+                ->andWhere(['user_idUtilizador' => $user->id])->one();
 
-        $favorito = Favoritos::find()->where(['pt_idPontoTuristico' => $id])
-            ->andWhere(['user_idUtilizador' => $user->id])->one();
-
-        $favorito->delete();
-
+            if($favorito->delete() == true){
+                return true;
+            }else{
+                return null;
+            }
+        }else{
+            return "Utilizador não encontrado";
+        }
     }
 
 }

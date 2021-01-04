@@ -141,7 +141,7 @@ class UserprofileController extends Activecontroller
 
     public function actionUsername($user)
     {
-        $user = User::findOne(['username' => $user]);
+        $user = User::find()->where(['username' => $user])->one();
 
         if ($user != null) {
 

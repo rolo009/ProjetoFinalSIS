@@ -90,7 +90,7 @@ $config = [
                 ['class' => 'yii\rest\UrlRule',
                     'controller' => 'contactos',
                     'pluralize' => false,
-                    'except' => ['delete','update'],
+                    'except' => ['delete', 'update'],
                     'extraPatterns' => [
                         'GET mensagem/{id}' => 'mensagem',
                         'GET naolidas' => 'naolidas',
@@ -111,6 +111,19 @@ $config = [
                         '{token}' => '<token:.*?>',
                         '{id}' => '<id:\d+>',
                     ],
+                ],
+
+                ['class' => 'yii\rest\UrlRule',
+                    'controller' => 'estiloconstrucao',
+                    'pluralize'=>false,
+                ],
+                ['class' => 'yii\rest\UrlRule',
+                    'controller' => 'tipomonumento',
+                    'pluralize'=>false,
+                ],
+                ['class' => 'yii\rest\UrlRule',
+                    'controller' => 'localidade',
+                    'pluralize'=>false,
                 ],
             ]
 

@@ -31,12 +31,11 @@ class PontosturisticosController extends Activecontroller
                     $pontoTuristico->localidade_idLocalidade = Localidade::find()->where(['id_localidade' => $pontoTuristico->localidade_idLocalidade])->one()->nomeLocalidade;
                 }
             }
-            return 'Nenhum Ponto Turístico corresponde à sua pesquisa!';
+            return $pontosTuristicos;
 
         }
+        return 'Nenhum Ponto Turístico corresponde à sua pesquisa!';
 
-
-        return $pontosTuristicos;
     }
 
     public function actionLocalidade($local)
