@@ -58,12 +58,12 @@ class FavoritosController extends Activecontroller
 
             $favorito->save(false);
 
-            if($favorito->save() == true){
+            if ($favorito->save() == true) {
                 return true;
-            }else{
+            } else {
                 return null;
             }
-        }else{
+        } else {
             return "Utilizador não encontrado";
         }
 
@@ -76,14 +76,32 @@ class FavoritosController extends Activecontroller
             $favorito = Favoritos::find()->where(['pt_idPontoTuristico' => $id])
                 ->andWhere(['user_idUtilizador' => $user->id])->one();
 
-            if($favorito->delete() == true){
+            if ($favorito->delete() == true) {
                 return true;
-            }else{
+            } else {
                 return null;
             }
-        }else{
+        } else {
             return "Utilizador não encontrado";
         }
+    }
+
+    public function actionCheck($id, $token)
+    {
+        $user = User::find()->where(['verification_token' => $token])->one();
+        if ($user != null) {
+            $favorito = Favoritos::find()->where(['pt_idPontoTuristico' => $id])
+                ->andWhere(['user_idUtilizador' => $user->id])->one();
+
+            if ($favorito != null) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return "Utilizador não encontrado";
+        }
+
     }
 
 }

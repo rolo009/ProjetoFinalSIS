@@ -65,7 +65,7 @@ class UserprofileController extends Activecontroller
 
         if ($user != null && $userProfile != null) {
 
-            return ['Utilizador' => [
+            return [
                 'ID Utilizador' => $userProfile->id_userProfile,
                 'Nome' => $userProfile->primeiroNome . " " . $userProfile->ultimoNome,
                 'Nome de Utilizador' => $user->username,
@@ -74,7 +74,7 @@ class UserprofileController extends Activecontroller
                 'Morada' => $userProfile->morada,
                 'Localidade' => $userProfile->localidade,
                 'Sexo' => $userProfile->sexo,
-            ]];
+            ];
         } else {
             return "Utilizador não encontrado";
 

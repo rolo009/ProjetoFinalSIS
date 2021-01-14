@@ -6,6 +6,7 @@ use app\models\Estiloconstrucao;
 use app\models\Favoritos;
 use app\models\Localidade;
 use app\models\Pontosturisticos;
+use app\models\Ratings;
 use app\models\Tipomonumento;
 use app\models\Visitados;
 use Yii;
@@ -20,6 +21,7 @@ class PontosturisticosController extends Activecontroller
     {
         $pontosTuristicos = Pontosturisticos::find()->where(['status' => 1])->all();
         if ($pontosTuristicos != null) {
+
             foreach ($pontosTuristicos as $pontoTuristico) {
                 if ($pontoTuristico->tm_idTipoMonumento != null) {
                     $pontoTuristico->tm_idTipoMonumento = Tipomonumento::find()->where(['idTipoMonumento' => $pontoTuristico->tm_idTipoMonumento])->one()->descricao;
@@ -32,10 +34,8 @@ class PontosturisticosController extends Activecontroller
                 }
             }
             return $pontosTuristicos;
-
         }
         return 'Nenhum Ponto Turístico corresponde à sua pesquisa!';
-
     }
 
     public function actionLocalidade($local)
@@ -113,7 +113,11 @@ class PontosturisticosController extends Activecontroller
         $procuraTipoMonumento = Tipomonumento::findOne(['descricao' => $pesquisa]);
 
         if ($procuraLocalidade != null) {
-            $pontosTuristicos = Pontosturisticos::find()->where(['localidade_idLocalidade' => $procuraLocalidade->id_localidade])->andWhere(['status' => 1])->all();
+            $pontosTuristicos = Pontosturisticos::find()
+                ->where(['pontosturisticos.localidade_idLocalidade' => $procuraLocalidade->id_localidade])
+                ->andWhere(['pontosturisticos.status' => 1])
+                ->all();
+
             if ($pontosTuristicos == null) {
                 return 'Nenhum Ponto Turístico corresponde à sua pesquisa!';
             }
@@ -123,12 +127,19 @@ class PontosturisticosController extends Activecontroller
                 return 'Nenhum Ponto Turístico corresponde à sua pesquisa!';
             }
         } elseif ($procuraEstiloConstrucao != null) {
-            $pontosTuristicos = Pontosturisticos::find()->where(['ec_IdEstiloConstrucao' => $procuraEstiloConstrucao->idEstiloConstrucao])->andWhere(['status' => 1])->all();
+            $pontosTuristicos = Pontosturisticos::find()
+                ->where(['ec_IdEstiloConstrucao' => $procuraEstiloConstrucao->idEstiloConstrucao])
+                ->andWhere(['status' => 1])
+                ->all();
+
             if ($pontosTuristicos == null) {
                 return 'Nenhum Ponto Turístico corresponde à sua pesquisa!';
             }
         } elseif ($procuraTipoMonumento != null) {
-            $pontosTuristicos = Pontosturisticos::find()->where(['tm_IdTipoMonumento' => $procuraTipoMonumento->idTipoMonumento])->andWhere(['status' => 1])->all();
+            $pontosTuristicos = Pontosturisticos::find()->where(['tm_IdTipoMonumento' => $procuraTipoMonumento->idTipoMonumento])
+                ->andWhere(['status' => 1])
+                ->all();
+
             if ($pontosTuristicos == null) {
                 return 'Nenhum Ponto Turístico corresponde à sua pesquisa!';
             }
@@ -147,6 +158,8 @@ class PontosturisticosController extends Activecontroller
                 if ($pontoTuristico->localidade_idLocalidade != null) {
                     $pontoTuristico->localidade_idLocalidade = Localidade::find()->where(['id_localidade' => $pontoTuristico->localidade_idLocalidade])->one()->nomeLocalidade;
                 }
+                $pontoTuristico->foto = '@web/imagens/img-pt/' . $pontoTuristico->foto;
+
             }
 
             return $pontosTuristicos;

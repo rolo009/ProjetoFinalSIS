@@ -71,7 +71,7 @@ $config = [
                 ['class' => 'yii\rest\UrlRule',
                     'controller' => 'userprofile',
                     'pluralize' => false,
-                    'except' => ['delete', 'create'],
+                    'except' => ['delete', 'create', 'update', 'view'],
                     'extraPatterns' => [
                         'GET info/{id}' => 'info',
                         'PATCH apagaruser/{token}' => 'apagaruser',
@@ -106,6 +106,7 @@ $config = [
                         'GET info/{token}' => 'info',
                         'POST add' => 'add',
                         'DELETE remover/{id}/{token}' => 'remover',
+                        'GET check/{id}/{token}' => 'check',
                     ],
                     'tokens' => [
                         '{token}' => '<token:.*?>',

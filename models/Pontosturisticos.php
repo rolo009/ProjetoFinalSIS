@@ -142,47 +142,69 @@ class Pontosturisticos extends \yii\db\ActiveRecord
     {
         parent::afterSave($insert, $changedAttributes);
 
-        //Obter dados do registo em causa
-        $id=$this->id_pontoTuristico;
+        $id = $this->id_pontoTuristico;
         $nome = $this->nome;
-        $myObj=new \stdClass();
-        $myObj->id=$id;
-        $myObj->nome=$nome;
+        $anoConstrucao = $this->anoConstrucao;
+        $descricao = $this->descricao;
+        $foto = $this->foto;
+        $tm_idTipoMonumento = $this->tm_idTipoMonumento;
+        $ec_idEstiloConstrucao = $this->ec_idEstiloConstrucao;
+        $localidade_idLocalidade = $this->localidade_idLocalidade;
+        $horario = $this->horario;
+        $morada = $this->morada;
+        $telefone = $this->telefone;
+        $latitude = $this->latitude;
+        $longitude = $this->morada;
+
+        $myObj = new \stdClass();
+        $myObj->id = $id;
+        $myObj->nome = $nome;
+        $myObj->anoConstrucao = $anoConstrucao;
+        $myObj->descricao = $descricao;
+        $myObj->foto = $foto;
+        $myObj->tm_idTipoMonumento = $tm_idTipoMonumento;
+        $myObj->ec_idEstiloConstrucao = $ec_idEstiloConstrucao;
+        $myObj->localidade_idLocalidade = $localidade_idLocalidade;
+        $myObj->horario = $horario;
+        $myObj->morada = $morada;
+        $myObj->telefone = $telefone;
+        $myObj->latitude = $latitude;
+        $myObj->longitude = $longitude;
+
         $myJSON = json_encode($myObj);
-        if($insert)
-            $this->FazPublish("INSERT",$myJSON);
+        if ($insert)
+            $this->FazPublish("INSERT", $myJSON);
         else
-            $this->FazPublish("UPDATE",$myJSON);
+            $this->FazPublish("UPDATE", $myJSON);
     }
 
     public function afterDelete()
     {
         parent::afterDelete();
 
-        $prod_id= $this->id_pontoTuristico;
-        $prod_nome= $this->nome;
-        $myObj=new \stdClass();
-        $myObj->id=$prod_id;
-        $myObj->nome=$prod_nome;
+        $prod_id = $this->id_pontoTuristico;
+        $prod_nome = $this->nome;
+        $myObj = new \stdClass();
+        $myObj->id = $prod_id;
+        $myObj->nome = $prod_nome;
         $myJSON = json_encode($myObj);
-        $this->FazPublish("DELETE",$myJSON);
+        $this->FazPublish("DELETE", $myJSON);
     }
 
-    public function FazPublish($canal,$msg)
+    public function FazPublish($canal, $msg)
     {
         $server = "127.0.0.1";
-        $port = 1888;
-        $username = "Server"; // set your username
-        $password = ""; // set your password
-        $client_id = "phpMQTT-publisher"; // unique!
+        $port = 1883;
+        $username = "ServerCultravel";
+        $password = "";
+        $client_id = "user-cultravel";
+
         $mqtt = new \app\mosquitto\phpMQTT($server, $port, $client_id);
-        if ($mqtt->connect(true, NULL, $username, $password))
-        {
+        if ($mqtt->connect(true, NULL, $username, $password)) {
             $mqtt->publish($canal, $msg, 0);
             $mqtt->close();
+        } else {
+            file_put_contents("debug.output", "Time out!");
         }
-        else {
-            file_put_contents("debug.output","Time out!");
-        }
-}
+    }
 }
