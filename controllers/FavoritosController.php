@@ -34,6 +34,9 @@ class FavoritosController extends Activecontroller
                 if ($pontoTuristicoFavorito->localidade_idLocalidade != null) {
                     $pontoTuristicoFavorito->localidade_idLocalidade = Localidade::find()->where(['id_localidade' => $pontoTuristicoFavorito->localidade_idLocalidade])->one()->nomeLocalidade;
                 }
+
+                $pontoTuristicoFavorito->foto = 'http://10.0.2.2:8888/imagens/img-pt/' . $pontoTuristicoFavorito->foto;
+
             }
             if ($pontosTuristicosFavoritos != null) {
                 return $pontosTuristicosFavoritos;

@@ -47,7 +47,7 @@ class UserprofileController extends Activecontroller
         $modelUser = User::find()->where(['email' => $model->email])->one();
 
         if ($modelUser->status != 10) {
-             throw new \yii\web\NotFoundHttpException("Esta conta não possui os requisitos para que possa ser acedida!");
+            throw new \yii\web\NotFoundHttpException("Esta conta não possui os requisitos para que possa ser acedida!");
 
         } else {
             if ($model->login()) {
@@ -86,6 +86,19 @@ class UserprofileController extends Activecontroller
         $user = new User();
         $userProfile = new Userprofile();
 
+        $email = User::find()->where(['email' => \Yii::$app->request->post('email')])->one();
+        $username = User::find()->where(['username' => \Yii::$app->request->post('username')])->one();
+
+
+        if ($username != null) {
+            $erroUsername = 1;
+            return $erroUsername;
+        }
+        if ($email != null) {
+            $erroEmail = 0;
+            return $erroEmail;
+        }
+
         $user->username = \Yii::$app->request->post('username');;
         $user->email = \Yii::$app->request->post('email');;
         $user->setPassword(\Yii::$app->request->post('password'));
@@ -112,15 +125,36 @@ class UserprofileController extends Activecontroller
 
     }
 
-    public function actionEditar($token)
+    public function actionEditar()
     {
-        $user = User::find()->where(['verification_token' => $token])->one();
+        $user = User::find()->where(['verification_token' => \Yii::$app->request->post('token')])->one();
+
         if ($user != null) {
             $userProfile = Userprofile::find()->where(['id_user_rbac' => $user->id])->one();
 
-            $user->username = \Yii::$app->request->post('username');
-            $user->email = \Yii::$app->request->post('email');
-            $user->setPassword(\Yii::$app->request->post('password'));
+            if ($user->username != \Yii::$app->request->post('username')) {
+                $usernameSearch = User::find()->where(['username' => \Yii::$app->request->post('username')])->one();
+                if ($usernameSearch == null) {
+                    $user->username = \Yii::$app->request->post('username');
+                } else {
+                    return 1;
+                }
+            }
+            if ($user->email != \Yii::$app->request->post('email')) {
+                $emailSearch = User::find()->where(['email' => \Yii::$app->request->post('email')])->one();
+                if ($emailSearch == null) {
+                    $user->username = \Yii::$app->request->post('username');
+                } else {
+                    return 2;
+                }
+            }
+            if (\Yii::$app->request->post('oldPassword') != "0") {
+                if ($user->validatePassword(\Yii::$app->request->post('oldPassword')) == true) {
+                    $user->setPassword(\Yii::$app->request->post('password'));
+                } else {
+                    return 0;
+                }
+            }
             $userProfile->primeiroNome = \Yii::$app->request->post('primeiroNome');
             $userProfile->ultimoNome = \Yii::$app->request->post('ultimoNome');
             $userProfile->dtaNascimento = \Yii::$app->request->post('dtaNascimento');
@@ -139,13 +173,25 @@ class UserprofileController extends Activecontroller
         return "Utilizador não encontrado/atualizado";
     }
 
-    public function actionUsername($user)
+    public function actionUser($token)
     {
-        $user = User::find()->where(['username' => $user])->one();
+        $user = User::find()->where(['verification_token' => $token])->one();
 
-        if ($user != null) {
+        $userprofile = Userprofile::find()->where(['id_userProfile' => $user->id])->one();
 
-            return $user;
+        if ($userprofile != null) {
+
+            return [
+                'primeiroNome' => $userprofile->primeiroNome,
+                'ultimoNome' => $userprofile->ultimoNome,
+                'username' => $user->username,
+                'email' => $user->email,
+                'dtaNascimento' => $userprofile->dtaNascimento,
+                'morada' => $userprofile->morada,
+                'localidade' => $userprofile->localidade,
+                'distrito' => $userprofile->distrito,
+                'sexo' => $userprofile->sexo,
+            ];
 
         } else {
             return "Utilizador não encontrado";

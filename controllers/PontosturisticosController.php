@@ -158,10 +158,9 @@ class PontosturisticosController extends Activecontroller
                 if ($pontoTuristico->localidade_idLocalidade != null) {
                     $pontoTuristico->localidade_idLocalidade = Localidade::find()->where(['id_localidade' => $pontoTuristico->localidade_idLocalidade])->one()->nomeLocalidade;
                 }
-                $pontoTuristico->foto = '@web/imagens/img-pt/' . $pontoTuristico->foto;
+                $pontoTuristico->foto = 'http://10.0.2.2:8888/imagens/img-pt/' . $pontoTuristico->foto;
 
             }
-
             return $pontosTuristicos;
         }
     }

@@ -67,7 +67,6 @@ $config = [
                         '{pesquisa}' => '<pesquisa:.*?>',
                     ],
                 ],
-
                 ['class' => 'yii\rest\UrlRule',
                     'controller' => 'userprofile',
                     'pluralize' => false,
@@ -76,13 +75,12 @@ $config = [
                         'GET info/{id}' => 'info',
                         'PATCH apagaruser/{token}' => 'apagaruser',
                         'POST registo' => 'registo',
-                        'GET username/{user}' => 'username',
-                        'PUT editar/{token}' => 'editar',
+                        'GET user/{token}' => 'user',
+                        'PUT editar' => 'editar',
                         'POST login' => 'login',
                     ],
                     'tokens' => [
                         '{id}' => '<id:\d+>',
-                        '{user}' => '<user:.*?>',
                         '{token}' => '<token:.*?>',
                     ],
                 ],
